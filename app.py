@@ -125,7 +125,7 @@ def calculate_total_co2():
         total_co2 += data[lunch_choice]["co2_per_serving"] * grasp_lunch / 1000
     if dinner_choice != "Select your dish":
         total_co2 += data[dinner_choice]["co2_per_serving"] * grasp_dinner / 1000
-    return total_co2
+    return round(total_co2, 2)
 
 # Display macros for selected meals
 def display_meal(meal, dish, total_energy, total_carbs, total_fats, total_proteins):
