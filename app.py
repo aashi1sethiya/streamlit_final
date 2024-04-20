@@ -1,6 +1,7 @@
 import streamlit as st
 from streamlit_echarts import st_echarts
 
+# Define gauge chart options with reversed colors
 def draw_gauge_chart(total_emission):
     option = {
         "series": [
@@ -74,7 +75,6 @@ def draw_gauge_chart(total_emission):
     }
     return option
 
-
 # Title
 st.title("Meal Tracker and Carbon Footprint Calculator")
 
@@ -136,13 +136,36 @@ def display_meal(meal, dish, total_energy, total_carbs, total_fats, total_protei
     st.write(f"**Macros for {dish} {meal}:**")
     st.bar_chart({"Carbs": total_carbs, "Fats": total_fats, "Proteins": total_proteins})
 
+# Display CO2 emission text for each meal
+def display_co2_text(meal, choice, grasp):
+    if choice != "Select your dish":
+        co2_per_serving = data[choice]["co2_per_serving"]
+        co2_emission = co2_per_serving * grasp / 1000
+        st.write(f"{choice} in {meal} is {co2_emission:.2f} ")
+
 # Calculate and display total CO2 emissions
 total_emission = calculate_total_co2()
 
 # Display total CO2 emission gauge chart
 if breakfast_choice != "Select your dish" or lunch_choice != "Select your dish" or dinner_choice != "Select your dish":
     st.write("### Total CO2 Emission:")
-    st_echarts(options=draw_gauge_chart(total_emission), height="300px")
+    
+    # Use st.columns to adjust layout
+    gauge_col, text_col = st.columns([3, 1])
+    
+    with gauge_col:
+        st_echarts(options=draw_gauge_chart(total_emission), height="300px")
+        
+    with text_col:
+        # Display CO2 emission text for each meal
+        st.write("### kg CO2 Emission per Meal:")
+        if breakfast_choice != "Select your dish":
+            display_co2_text("Breakfast", breakfast_choice, grasp_breakfast)
+        if lunch_choice != "Select your dish":
+            display_co2_text("Lunch", lunch_choice, grasp_lunch)
+        if dinner_choice != "Select your dish":
+            display_co2_text("Dinner", dinner_choice, grasp_dinner)
+
 
 # Display macros for selected meals side by side
 if breakfast_choice != "Select your dish" or lunch_choice != "Select your dish" or dinner_choice != "Select your dish":
