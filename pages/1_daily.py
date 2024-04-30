@@ -20,6 +20,7 @@ with col1:
 with col2:
     co2_emissions_saved_placeholder = st.empty()
 
+user_input_started = False
 
 # Define a shared variable to accumulate total CO2 emissions
 total_emissions_all_tabs = 0
@@ -401,10 +402,10 @@ with tab2:
                     st.write(f"No data available for {meal}")
 
 
-
+if selected_commutes:
 # Display total CO2 emissions above the tabs
-total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
-co2_emissions_saved_placeholder.metric(label="Total Co2 emissions saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
+    total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
+    co2_emissions_saved_placeholder.metric(label="Total Co2 emissions saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
 
 
 
