@@ -20,10 +20,42 @@ with col1:
 with col2:
     co2_emissions_saved_placeholder = st.empty()
 
+user_input_started = False
 
 # Define a shared variable to accumulate total CO2 emissions
 total_emissions_all_tabs = 0
 co2_emissions_saved_all_tabs = 0
+
+# Function to calculate CO2 emissions for selected commutes
+def calculate_commute_co2(selected_commutes, commute_miles):
+    co2_emissions = {
+        "Car": 0.404,
+        "Bicycle": 0.002,
+        "Walking": 0.01,
+        "Public Transportation": 0.296,
+        "Motorcycle": 0.225,
+        "Electric Vehicle": 0.05,
+        "Carpool": 0.202
+    }
+    total_emissions = sum(commute_miles.get(commute, 0) * co2_emissions.get(commute, 0) for commute in selected_commutes)
+    return total_emissions
+
+# Function to calculate CO2 emissions for selected meals
+def calculate_meal_co2(meals, grasp_meals_left, grasp_meals_right, data):
+    total_co2 = 0
+    for meal in meals:
+        grasp_meals = grasp_meals_left if meals.index(meal) % 2 == 0 else grasp_meals_right
+        total_co2 += data[meal]["co2_per_serving"] * grasp_meals[meal] / 250
+    return total_co2
+
+# Function to display CO2 emissions metric
+def display_co2_metric(total_emissions):
+    total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions, 2))
+
+# Track whether any user input has been made using Streamlit's session state
+if "user_input_started" not in st.session_state:
+    st.session_state.user_input_started = False
+
 
 tab1, tab2, tab3, tab4 = st.tabs(["Commute", "Food", "Appliances", "Recycle"])
 
@@ -146,7 +178,11 @@ with tab1:
                 co2_emissions_selected = {commute: commute_miles.get(commute, 0) * co2_emissions.get(commute, 0) for commute in selected_commutes}
                 total_emissions_tab1 = sum(co2_emissions_selected.values())
                 total_emissions_all_tabs += total_emissions_tab1
+                # Display CO2 emissions metric if user input has started
+                if selected_commutes or st.session_state.user_input_started:
+                            display_co2_metric(total_emissions_all_tabs)
                 st.metric(label="Total Commute Co2 emissions (kg)", value=round(total_emissions_tab1, 2))
+
 
         # Function to generate the footprint bars
         def generate_footprint_bars(total_emissions_tab1, new_emission):
@@ -400,12 +436,15 @@ with tab2:
                 else:
                     st.write(f"No data available for {meal}")
 
+        if meals or st.session_state.user_input_started:
+            display_co2_metric(total_emissions_all_tabs)
 
-
+if selected_commutes:
 # Display total CO2 emissions above the tabs
-total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
-co2_emissions_saved_placeholder.metric(label="Total Co2 emissions saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
-
+    total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
+    co2_emissions_saved_placeholder.metric(label="Total Co2 emissions saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
+if selected_commutes or meals:
+    st.session_state.user_input_started = True
 
 
 # Display CO2 emissions saved as metric
