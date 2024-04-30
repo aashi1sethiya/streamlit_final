@@ -7,6 +7,7 @@ from pyecharts.charts import PictorialBar
 import numpy as np
 from PIL import Image
 
+selected_low_impact_meals = []
 
 
 # Main page
@@ -51,6 +52,11 @@ def calculate_meal_co2(meals, grasp_meals_left, grasp_meals_right, data):
 # Function to display CO2 emissions metric
 def display_co2_metric(total_emissions):
     total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions, 2))
+
+# Function to display CO2 emissions saved metric
+def display_co2_saved_metric(total_emissions_saved):
+    co2_emissions_saved_placeholder.metric(label="CO2 Emissions Saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
+
 
 # Track whether any user input has been made using Streamlit's session state
 if "user_input_started" not in st.session_state:
@@ -244,8 +250,9 @@ with tab1:
                         # Calculate new emissions based on user input
                         new_emission = new_miles * co2_emissions.get(new_commute, 0)  # Actual emission rate for new commute
                         # Display CO2 emissions saved as metric
-                        co2_emissions_saved = total_emissions_tab1 - new_emission
+                        co2_emissions_saved = total_emissions_all_tabs - new_emission
                         co2_emissions_saved_all_tabs  += co2_emissions_saved
+                        display_co2_saved_metric(co2_emissions_saved_all_tabs)
 
 
                         col1, col2 = st.columns([3,1])
@@ -344,22 +351,47 @@ with tab2:
                 grasp_meals = grasp_meals_left if meal in grasp_meals_left else grasp_meals_right
                 co2_per_serving = data[choice]["co2_per_serving"]
                 co2_emission = co2_per_serving * grasp_meals[meal] / 250  # Adjusted calculation
+        
                 
 
         data = {
-            "Eggs": {"energy_kcal": 388, "carbs": 2.5, "fats": 27.5, "proteins": 32.5, "co2_per_serving": 0.2},
-            "Cereal": {"energy_kcal": 500, "carbs": 112.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.3},
-            "Toast": {"energy_kcal": 200, "carbs": 37.5, "fats": 2.5, "proteins": 7.5, "co2_per_serving": 0.1},
-            "Oatmeal": {"energy_kcal": 375, "carbs": 67.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.25},
-            "Sandwich": {"energy_kcal": 700, "carbs": 80, "fats": 37.5, "proteins": 50, "co2_per_serving": 0.4},
-            "Salad": {"energy_kcal": 400, "carbs": 20, "fats": 30, "proteins": 20, "co2_per_serving": 0.15},
-            "Soup": {"energy_kcal": 300, "carbs": 50, "fats": 12.5, "proteins": 25, "co2_per_serving": 0.2},
-            "Pasta": {"energy_kcal": 600, "carbs": 100, "fats": 20, "proteins": 37.5, "co2_per_serving": 0.35},
-            "Chicken": {"energy_kcal": 500, "carbs": 0, "fats": 20, "proteins": 75, "co2_per_serving": 0.45},
-            "Steak": {"energy_kcal": 700, "carbs": 0, "fats": 40, "proteins": 62.5, "co2_per_serving": 0.6},
-            "Fish": {"energy_kcal": 400, "carbs": 0, "fats": 16, "proteins": 62.5, "co2_per_serving": 0.5},
-            "Vegetables": {"energy_kcal": 200, "carbs": 50, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.1}
-        }
+    "Eggs": {"energy_kcal": 388, "carbs": 2.5, "fats": 27.5, "proteins": 32.5, "co2_per_serving": 0.2},
+    "Cereal": {"energy_kcal": 500, "carbs": 112.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.3},
+    "Toast": {"energy_kcal": 200, "carbs": 37.5, "fats": 2.5, "proteins": 7.5, "co2_per_serving": 0.1},
+    "Oatmeal": {"energy_kcal": 375, "carbs": 67.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.25},
+    "Sandwich": {"energy_kcal": 700, "carbs": 80, "fats": 37.5, "proteins": 50, "co2_per_serving": 0.4},
+    "Salad": {"energy_kcal": 400, "carbs": 20, "fats": 30, "proteins": 20, "co2_per_serving": 0.15},
+    "Soup": {"energy_kcal": 300, "carbs": 50, "fats": 12.5, "proteins": 25, "co2_per_serving": 0.2},
+    "Pasta": {"energy_kcal": 600, "carbs": 100, "fats": 20, "proteins": 37.5, "co2_per_serving": 0.4},
+    "Chicken": {"energy_kcal": 500, "carbs": 0, "fats": 20, "proteins": 75, "co2_per_serving": 0.45},
+    "Steak": {"energy_kcal": 700, "carbs": 0, "fats": 40, "proteins": 62.5, "co2_per_serving": 0.6},
+    "Fish": {"energy_kcal": 400, "carbs": 0, "fats": 16, "proteins": 62.5, "co2_per_serving": 0.5},
+    "Vegetables": {"energy_kcal": 200, "carbs": 50, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.175},
+    "Beef": {"energy_kcal": 700, "carbs": 0, "fats": 45, "proteins": 60, "co2_per_serving": 0.7},
+    "Pork": {"energy_kcal": 600, "carbs": 0, "fats": 30, "proteins": 70, "co2_per_serving": 0.55},
+    "Lamb": {"energy_kcal": 600, "carbs": 0, "fats": 35, "proteins": 65, "co2_per_serving": 0.8},
+    "Shrimp": {"energy_kcal": 200, "carbs": 0, "fats": 5, "proteins": 30, "co2_per_serving": 0.45},
+    "Crab": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.35},
+    "Lobster": {"energy_kcal": 250, "carbs": 0, "fats": 10, "proteins": 25, "co2_per_serving": 0.6}
+}
+
+        low_impact_food_data = {
+            "Locally sourced Fruits": {"co2_per_serving": 0.2},  # Placeholder value
+            "Locally sourced Vegetables": {"co2_per_serving": 0.15},  # Placeholder value
+            "Legumes": {"co2_per_serving": 0.2},  # Placeholder value
+            "Rice & Grains": {"co2_per_serving": 0.9},  # Placeholder value
+            "Tofu": {"co2_per_serving": 0.32},  # Placeholder value
+            "Milk": {"co2_per_serving": 0.32},  # Placeholder value
+            "Eggs": {"co2_per_serving": 0.2},  # Placeholder value
+            "Breads & Pastas": {"co2_per_serving": 0.4}, # Placeholder value
+            "Nuts": {"co2_per_serving": 0.04},
+            }
+        def calculate_total_co2_emission(selected_meals):
+            total_emission = 0
+            for meal in selected_meals:
+                if meal in low_impact_food_data:
+                    total_emission += low_impact_food_data[meal]["co2_per_serving"]
+            return total_emission
 
         # Main page
         st.write("# Food Co2 Emissions + Macros Track")
@@ -413,36 +445,49 @@ with tab2:
                 st.write("### Total CO2 Emission Gauge")
                 st_echarts(options=draw_gauge_chart(total_emission), height="300px")
 
+        if meals:
+            with st.expander("Reduce Food Carbon Footprint"):
+                selected_low_impact_meals = st.multiselect("Select Low-Impact Foods",
+        list(low_impact_food_data.keys()), default=[],
+        help="Select low-impact foods for your meals to reduce CO2 emissions.")
+                if st.button("Calculate co2 savings on food"):
+                    total_emission_selected_meals = calculate_total_co2_emission(selected_low_impact_meals)
+                    co2_emissions_saved = total_emissions_all_tabs - total_emission_selected_meals
+                    co2_emissions_saved_all_tabs  += co2_emissions_saved
+                    if selected_low_impact_meals or st.session_state.user_input_started:
+                            display_co2_saved_metric(co2_emissions_saved_all_tabs)
+                    st.metric(label="Total CO2 Emission saved", value=round(co2_emissions_saved_all_tabs,2))
+                    
+                
+
         # Display individual meal macros
         if meals:
-            st.write("### Individual Meal Macros:")
-            selected_meals = [choice for choice in meals if choice != "Select your dish"]
-            num_columns = min(len(selected_meals), 4)  # Limit the number of columns to 4
-            num_rows = len(selected_meals) // num_columns + (1 if len(selected_meals) % num_columns != 0 else 0)
-            columns = st.columns(num_columns)
+            with st.expander("Individual Meal Macros:"):
+                selected_meals = [choice for choice in meals if choice != "Select your dish"]
+                num_columns = min(len(selected_meals), 4)  # Limit the number of columns to 4
+                num_rows = len(selected_meals) // num_columns + (1 if len(selected_meals) % num_columns != 0 else 0)
+                columns = st.columns(num_columns)
 
-            for i, meal in enumerate(selected_meals):
-                if meal in data:  # Check if the meal is present in the data dictionary
-                    choice = meal
-                    grasp_meals = grasp_meals_left if meal in grasp_meals_left else grasp_meals_right
-                    total_energy = (data[choice]["energy_kcal"] * grasp_meals[meal]) / 250
-                    total_carbs = (data[choice]["carbs"] * grasp_meals[meal]) / 250
-                    total_fats = (data[choice]["fats"] * grasp_meals[meal]) / 250
-                    total_proteins = (data[choice]["proteins"] * grasp_meals[meal]) / 250
-                    with columns[i % num_columns]:
-                        st.subheader(f"{choice}")
-                        st.write(f"**Total Energy (kcal):** {total_energy:.2f}")
-                        st.bar_chart({"Carbs": total_carbs, "Fats": total_fats, "Proteins": total_proteins})
-                else:
-                    st.write(f"No data available for {meal}")
+                for i, meal in enumerate(selected_meals):
+                    if meal in data:  # Check if the meal is present in the data dictionary
+                        choice = meal
+                        grasp_meals = grasp_meals_left if meal in grasp_meals_left else grasp_meals_right
+                        total_energy = (data[choice]["energy_kcal"] * grasp_meals[meal]) / 250
+                        total_carbs = (data[choice]["carbs"] * grasp_meals[meal]) / 250
+                        total_fats = (data[choice]["fats"] * grasp_meals[meal]) / 250
+                        total_proteins = (data[choice]["proteins"] * grasp_meals[meal]) / 250
+                        with columns[i % num_columns]:
+                            st.subheader(f"{choice}")
+                            st.write(f"**Total Energy (kcal):** {total_energy:.2f}")
+                            st.bar_chart({"Carbs": total_carbs, "Fats": total_fats, "Proteins": total_proteins})
+                    else:
+                        st.write(f"No data available for {meal}")
 
         if meals or st.session_state.user_input_started:
             display_co2_metric(total_emissions_all_tabs)
-
-if selected_commutes:
-# Display total CO2 emissions above the tabs
-    total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
-    co2_emissions_saved_placeholder.metric(label="Total Co2 emissions saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
+        if selected_low_impact_meals or st.session_state.user_input_started:
+            display_co2_saved_metric(co2_emissions_saved_all_tabs)
+ 
 if selected_commutes or meals:
     st.session_state.user_input_started = True
 
