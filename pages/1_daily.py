@@ -14,6 +14,7 @@ st.title("Daily Carbon Footprint Calculator")
 
 # Define a shared variable to accumulate total CO2 emissions
 total_emissions_all_tabs = 0
+co2_emissions_saved = 0
 
 tab1, tab2, tab3, tab4 = st.tabs(["Commute", "Food", "Appliances", "Recycle"])
 
@@ -71,8 +72,10 @@ with tab1:
         # Display SVG in Streamlit
         st.write(svg_code, unsafe_allow_html=True)
 
+
+        st.write("## Co2 Emissions for Commute")
+
     # Streamlit UI
-    st.write("## Co2 Emissions by Commute Option")
 
     # Write "Add your daily commute" above the multi-select input
     st.write("#### Add your daily commute")
@@ -136,85 +139,78 @@ with tab1:
                 total_emissions_all_tabs += total_emissions_tab1
                 st.metric(label="Total Commute Co2 emissions (kg)", value=round(total_emissions_tab1, 2))
 
-# Function to generate the footprint bars
-def generate_footprint_bars(total_emissions_tab1, new_emission):
-    # Calculate the height of the bars based on emissions
-    actual_height = total_emissions_tab1  # scaling for visualization
-    new_height = new_emission 
+        # Function to generate the footprint bars
+        def generate_footprint_bars(total_emissions_tab1, new_emission):
+            # Calculate the height of the bars based on emissions
+            actual_height = total_emissions_tab1  # scaling for visualization
+            new_height = new_emission 
 
-    # Load footprint image
-    footprint_image = Image.open("footprint.png")
+            # Load footprint image
+            footprint_image = Image.open("footprint.png")
 
-    # Plot footprint bars using the footprint image
-    fig, ax = plt.subplots()
+            # Plot footprint bars using the footprint image
+            fig, ax = plt.subplots()
 
-    # Plot actual emissions bar
-    ax.imshow(footprint_image, aspect='auto', extent=(0, 1, 0, actual_height), alpha=0.7, cmap='viridis')
-    ax.text(0.5, actual_height / 2, f"{total_emissions_tab1:.2f}", ha='center', va='center', color='white')
+            # Plot actual emissions bar
+            ax.imshow(footprint_image, aspect='auto', extent=(0, 1, 0, actual_height), alpha=0.7, cmap='viridis')
+            ax.text(0.5, actual_height / 2, f"{total_emissions_tab1:.2f}", ha='center', va='center', color='white')
 
-    # Plot new emissions bar
-    ax.imshow(footprint_image, aspect='auto', extent=(1.2, 2.2, 0, new_height), alpha=0.7, cmap='viridis')
-    ax.text(1.7, new_height / 2, f"{new_emission:.2f}", ha='center', va='center', color='white')
+            # Plot new emissions bar
+            ax.imshow(footprint_image, aspect='auto', extent=(1.2, 2.2, 0, new_height), alpha=0.7, cmap='viridis')
+            ax.text(1.7, new_height / 2, f"{new_emission:.2f}", ha='center', va='center', color='white')
 
-    # Customize plot
-    ax.set_ylabel('CO2 Footprint')
-    ax.set_title('CO2 Footprint Comparison')
-    ax.set_xticks([0.5, 1.7])
-    ax.set_xticklabels(["Actual", "New"])
-    ax.set_xlim(0, 2.5)
-    ax.set_ylim(0, max(actual_height, new_height) * 1.1)  # Set ylim to ensure all footprints are visible
-    ax.grid(False)
+            # Customize plot
+            ax.set_ylabel('CO2 Footprint')
+            ax.set_title('CO2 Footprint Comparison')
+            ax.set_xticks([0.5, 1.7])
+            ax.set_xticklabels(["Actual", "New"])
+            ax.set_xlim(0, 2.5)
+            ax.set_ylim(0, max(actual_height, new_height) * 1.1)  # Set ylim to ensure all footprints are visible
+            ax.grid(False)
 
-    # Remove x-axis ticks
-    ax.xaxis.set_ticks_position('none')
+            # Remove x-axis ticks
+            ax.xaxis.set_ticks_position('none')
 
-    # Remove y-axis ticks
-    ax.yaxis.set_ticks_position('none')
+            # Remove y-axis ticks
+            ax.yaxis.set_ticks_position('none')
 
-    # Show plot
-    st.pyplot(fig)
+            # Show plot
+            st.pyplot(fig)
 
-# Main function
-def main():
+            # User Inputs for Tab 1
+            total_emissions_tab1 = sum(co2_emissions_selected.values())
 
-    # User Inputs for Tab 1
-    total_emissions_tab1 = sum(co2_emissions_selected.values())
-
-    # Expander for user input for the new commute and CO2 emissions comparison
+        # Expander for user input for the new commute and CO2 emissions comparison
     if selected_commutes:
+                with st.expander("Reduce Commute Carbon Footprint"):
+                # Splitting the layout into columns
+                    input_col1, input_col2 = st.columns([3, 2])
 
-        with st.expander("Reduce Commute Carbon Footprint"):
-        # Splitting the layout into columns
-            input_col1, input_col2 = st.columns([3, 2])
+                # User input for new commute - select box
+                    with input_col1:
+                        new_commute = st.selectbox("Select New Commute Option", ["Car", "Bicycle", "Walking", "Public Transportation", "Motorcycle", "Electric Vehicle", "Carpool"])
 
-        # User input for new commute - select box
-            with input_col1:
-                new_commute = st.selectbox("Select New Commute Option", ["Car", "Bicycle", "Walking", "Public Transportation", "Motorcycle", "Electric Vehicle", "Carpool"])
-
-            # User input for new commute - number input
-            with input_col2:
-                new_miles = st.number_input("Miles for New Commute", min_value=0.1, step=0.1, value=0.1)
-        
-
-            if st.button("Calculate CO2 Emissions Saved"):
-                # Calculate new emissions based on user input
-                new_emission = new_miles * co2_emissions.get(new_commute, 0)  # Actual emission rate for new commute
-
-                col1, col2 = st.columns([3,1])
-
-                with col1:
-                    # Generate and display the footprint bars
-                    st.subheader("CO2 Footprint Comparison")
-                    generate_footprint_bars(total_emissions_tab1, new_emission)
+                    # User input for new commute - number input
+                    with input_col2:
+                        new_miles = st.number_input("Miles for New Commute", min_value=0.1, step=0.1, value=0.1)
                 
-                with col2:
-                    # Display CO2 emissions saved as metric
-                    co2_emissions_saved = total_emissions_tab1 - new_emission
-                    st.metric(label="CO2 Emissions Saved (kg)", value=round(co2_emissions_saved, 2))            
 
-if __name__ == "__main__":
-    main()
+                    if st.button("Calculate CO2 Emissions Saved"):
+                        # Calculate new emissions based on user input
+                        new_emission = new_miles * co2_emissions.get(new_commute, 0)  # Actual emission rate for new commute
 
+                        col1, col2 = st.columns([3,1])
+
+                        with col1:
+                            # Generate and display the footprint bars
+                            st.subheader("CO2 Footprint Comparison")
+                            generate_footprint_bars(total_emissions_tab1, new_emission)
+                        
+                        with col2:
+                            # Display CO2 emissions saved as metric
+                            co2_emissions_saved = total_emissions_tab1 - new_emission
+                            st.metric(label="CO2 Emissions Saved (kg)", value=round(co2_emissions_saved, 2))            
+            
 with tab2:
         def draw_gauge_chart(total_emission):
             option = {
@@ -393,8 +389,10 @@ with tab2:
                 else:
                     st.write(f"No data available for {meal}")
 
-# Display total CO2 emissions above the tabs
-st.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
+if selected_commutes:
+
+    # Display total CO2 emissions above the tabs
+    st.metric(label="Total Co2 emissions (kg)", value=round(total_emissions_all_tabs, 2))
 
 
 # Display CO2 emissions saved as metric
