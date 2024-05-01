@@ -53,7 +53,7 @@ def display_co2_metric(total_emissions):
     total_co2_metric_placeholder.metric(label="Total Co2 emissions (kg)", value=round(total_emissions, 2))
 
 # Function to display CO2 emissions saved metric
-def display_co2_saved_metric(total_emissions_saved):
+def display_co2_saved_metric(co2_emissions_saved_all_tabs):
     co2_emissions_saved_placeholder.metric(label="CO2 Emissions Saved (kg)", value=round(co2_emissions_saved_all_tabs, 2))
 
 
@@ -126,7 +126,7 @@ with tab1:
     # Streamlit UI
 
     # Write "Add your daily commute" above the multi-select input
-    st.write("#### Add your daily commute")
+    st.subheader("Add your daily commute")
 
     # User Inputs
     commute_options = [
@@ -414,7 +414,7 @@ with tab2:
             return total_emission
 
         # Main page
-        st.write("# Food Co2 Emissions + Macros Track")
+        st.write("## Food Co2 Emissions + Macros Track")
 
         # Sidebar
         col1, col2, col3 = st.columns([3, 1, 1])  # Divide the space into three columns
@@ -442,7 +442,7 @@ with tab2:
         col1, col2 = st.columns([2, 1])
         with col2:
             if meals:
-                st.subheader("CO2 Emissions (kg)")
+                st.subheader("Co2 Emissions (kg)")
                 for meal, choice in zip(meals, meals):
                     display_co2_text(meal, choice, grasp_meals_left, grasp_meals_right, data)
                     
@@ -452,7 +452,7 @@ with tab2:
                     for i, (meal, choice) in enumerate(zip(meals, meals)):
                         if choice != "Select your dish":
                             grasp_meals = grasp_meals_left if i % 2 == 0 else grasp_meals_right
-                            co2_emission = data[choice]["co2_per_serving"] * grasp_meals[meal] / 0.5
+                            co2_emission = data[choice]["co2_per_serving"] * grasp_meals[meal] / 1
                             if i % 2 == 0:
                                 with metrics_col1:
                                     st.metric(label=meal, value=round(co2_emission, 2))
@@ -473,15 +473,15 @@ with tab2:
 
             # Plot actual emissions bar
             ax.imshow(footprint_image, aspect='auto', extent=(0, 1, 0, actual_height), alpha=0.7, cmap='viridis')
-            ax.text(0.5, actual_height / 2, f"{total_emission:.2f}", ha='center', va='center', color='white')
+            ax.text(0.5, actual_height * 1, f"{total_emission:.2f}", ha='center', va='center', color='black', fontsize=12)
 
             # Plot new emissions bar
             ax.imshow(footprint_image, aspect='auto', extent=(1.2, 2.2, 0, new_height), alpha=0.7, cmap='viridis')
-            ax.text(1.7, new_height / 2, f"{total_emission_selected_meals:.2f}", ha='center', va='center', color='white')
+            ax.text(1.7, new_height * 1, f"{total_emission_selected_meals:.2f}", ha='center', va='center', color='black', fontsize=12)
 
             # Customize plot
-            ax.set_ylabel('CO2 Footprint')
-            ax.set_title('CO2 Footprint Comparison')
+            ax.set_ylabel('Co2 Footprint')
+            ax.set_title('Co2 Footprint Comparison')
             ax.set_xticks([0.5, 1.7])
             ax.set_xticklabels(["Actual", "New"])
             ax.set_xlim(0, 2.5)
@@ -510,10 +510,10 @@ with tab2:
                     selected_low_impact_meals = st.multiselect("Select Low-Impact Foods",
             list(low_impact_food_data.keys()), default=[],
             help="Select low-impact foods for your meals to reduce CO2 emissions.")
-                if st.button("Calculate co2 savings on food"):
+                if st.button("Calculate Co2 savings on food"):
                     total_emission_selected_meals = calculate_total_co2_emission(selected_low_impact_meals)
-                    co2_emissions_saved = total_emissions_all_tabs - total_emission_selected_meals
-                    co2_emissions_saved_all_tabs  += co2_emissions_saved
+                    co2_emissions_food_saved = total_emissions_all_tabs - total_emission_selected_meals
+                    co2_emissions_saved_all_tabs  += co2_emissions_food_saved
                     if selected_low_impact_meals or st.session_state.user_input_started:
                             display_co2_saved_metric(co2_emissions_saved_all_tabs)
                     generate_footprint_bars(total_emission, total_emission_selected_meals)
