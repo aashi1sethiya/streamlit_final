@@ -9,7 +9,6 @@ from PIL import Image
 
 selected_low_impact_meals = []
 
-
 # Main page
 st.title("Daily Carbon Footprint Calculator")
 
@@ -94,10 +93,12 @@ with tab1:
             "Car": "🚗",
             "Bicycle": "🚲",
             "Walking": "🚶",
-            "Public Transportation": "🚍",
             "Motorcycle": "🏍️",
             "Electric Vehicle": "🔌",
-            "Carpool": "🚗👥"  # Custom emoji for carpool
+            "Carpool": "🚗👥",
+            "Bus": "🚌",
+            "Train": "🚆",
+            "Truck": "🚚" # Custom emoji for carpool
         }
 
         # Generate SVG elements for each bar with emojis
@@ -132,25 +133,29 @@ with tab1:
             "Car",
             "Bicycle",
             "Walking",
-            "Public Transportation",
             "Motorcycle",
             "Electric Vehicle",
-            "Carpool"]
+            "Carpool",
+            "Bus",  
+            "Train",  
+            "Truck" 
+        ]
 
-        # Splitting the layout into columns
+    # Splitting the layout into columns
     input_col1, input_col2, input_col3 = st.columns([3, 1, 1])
         
-        # Multi-select input for commute options in the first column
+    # Multi-select input for commute options in the first column
     selected_commutes = input_col1.multiselect("# Select Commute Options", commute_options)
-        
-        # Inputs for miles traveled in the second and third columns
-    commute_miles = {}
-    for i, commute in enumerate(selected_commutes):
-            if i % 2 == 0:
-                col = input_col2
-            else:
-                col = input_col3
-            commute_miles[commute] = col.number_input(f"Miles for {commute}", min_value=0.1, max_value=None, step=0.1, key=f"{commute}_miles_input", value=0.1)
+
+    with st.expander('Miles of Commute'): 
+    # Inputs for miles traveled in the second and third columns
+        commute_miles = {}
+        for i, commute in enumerate(selected_commutes):
+                if i % 2 == 0:
+                    col = input_col2
+                else:
+                    col = input_col3
+                commute_miles[commute] = col.number_input(f"{commute} miles", min_value=0.1, max_value=None, step=0.1, key=f"{commute}_miles_input", value=0.1)
 
     # Expander for user input, graphs, and other content related to tab 1
     with st.expander("My Daily Commute"):
@@ -160,10 +165,13 @@ with tab1:
             "Car": 0.404,
             "Bicycle": 0.002,
             "Walking": 0.01,
-            "Public Transportation": 0.296,
             "Motorcycle": 0.225,
             "Electric Vehicle": 0.05,
-            "Carpool": 0.202}
+            "Carpool": 0.202,
+            "Bus": 0.134,  # Buses are a common form of public transportation, often used for commuting or city travel.
+            "Train": 0.126,  # Trains are a mode of public transportation that operate on fixed tracks and schedules, offering efficient long-distance travel with lower CO2 emissions compared to cars or airplanes.
+            "Truck": 0.53  # Trucks are typically used for transporting goods over long distances and are a significant source of CO2 emissions in the transportation sector.
+        }
 
         co2_emissions_selected = {commute: commute_miles.get(commute, 0) * co2_emissions.get(commute, 0) for commute in selected_commutes}
 
@@ -204,11 +212,11 @@ with tab1:
 
             # Plot actual emissions bar
             ax.imshow(footprint_image, aspect='auto', extent=(0, 1, 0, actual_height), alpha=0.7, cmap='viridis')
-            ax.text(0.5, actual_height / 2, f"{total_emissions_tab1:.2f}", ha='center', va='center', color='white')
+            ax.text(0.5, actual_height * 1 , f"{total_emissions_tab1:.2f}", ha='center', va='bottom', color='black',  fontsize=12)
 
             # Plot new emissions bar
             ax.imshow(footprint_image, aspect='auto', extent=(1.2, 2.2, 0, new_height), alpha=0.7, cmap='viridis')
-            ax.text(1.7, new_height / 2, f"{new_emission:.2f}", ha='center', va='center', color='white')
+            ax.text(1.7, new_height * 1, f"{new_emission:.2f}", ha='center', va='bottom', color='black',  fontsize=12)
 
             # Customize plot
             ax.set_ylabel('CO2 Footprint')
@@ -343,49 +351,61 @@ with tab2:
             total_co2 = 0
             for i, meal in enumerate(meals):
                 grasp_meals = grasp_meals_left if i % 2 == 0 else grasp_meals_right
-                total_co2 += data[meal]["co2_per_serving"] * grasp_meals[meal] / 250  # Adjusted calculation
+                total_co2 += data[meal]["co2_per_serving"] * grasp_meals[meal] / 1  # Adjusted calculation
             return round(total_co2, 2)
 
         def display_co2_text(meal, choice, grasp_meals_left, grasp_meals_right, data):
             if choice != "Select your dish":
                 grasp_meals = grasp_meals_left if meal in grasp_meals_left else grasp_meals_right
                 co2_per_serving = data[choice]["co2_per_serving"]
-                co2_emission = co2_per_serving * grasp_meals[meal] / 250  # Adjusted calculation
+                co2_emission = co2_per_serving * grasp_meals[meal] / 1  # Adjusted calculation
         
                 
 
         data = {
     "Eggs": {"energy_kcal": 388, "carbs": 2.5, "fats": 27.5, "proteins": 32.5, "co2_per_serving": 0.2},
-    "Cereal": {"energy_kcal": 500, "carbs": 112.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.3},
-    "Toast": {"energy_kcal": 200, "carbs": 37.5, "fats": 2.5, "proteins": 7.5, "co2_per_serving": 0.1},
-    "Oatmeal": {"energy_kcal": 375, "carbs": 67.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.25},
-    "Sandwich": {"energy_kcal": 700, "carbs": 80, "fats": 37.5, "proteins": 50, "co2_per_serving": 0.4},
-    "Salad": {"energy_kcal": 400, "carbs": 20, "fats": 30, "proteins": 20, "co2_per_serving": 0.15},
-    "Soup": {"energy_kcal": 300, "carbs": 50, "fats": 12.5, "proteins": 25, "co2_per_serving": 0.2},
-    "Pasta": {"energy_kcal": 600, "carbs": 100, "fats": 20, "proteins": 37.5, "co2_per_serving": 0.4},
-    "Chicken": {"energy_kcal": 500, "carbs": 0, "fats": 20, "proteins": 75, "co2_per_serving": 0.45},
-    "Steak": {"energy_kcal": 700, "carbs": 0, "fats": 40, "proteins": 62.5, "co2_per_serving": 0.6},
-    "Fish": {"energy_kcal": 400, "carbs": 0, "fats": 16, "proteins": 62.5, "co2_per_serving": 0.5},
-    "Vegetables": {"energy_kcal": 200, "carbs": 50, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.175},
-    "Beef": {"energy_kcal": 700, "carbs": 0, "fats": 45, "proteins": 60, "co2_per_serving": 0.7},
-    "Pork": {"energy_kcal": 600, "carbs": 0, "fats": 30, "proteins": 70, "co2_per_serving": 0.55},
-    "Lamb": {"energy_kcal": 600, "carbs": 0, "fats": 35, "proteins": 65, "co2_per_serving": 0.8},
-    "Shrimp": {"energy_kcal": 200, "carbs": 0, "fats": 5, "proteins": 30, "co2_per_serving": 0.45},
-    "Crab": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.35},
-    "Lobster": {"energy_kcal": 250, "carbs": 0, "fats": 10, "proteins": 25, "co2_per_serving": 0.6}
-}
+    "Cereal": {"energy_kcal": 500, "carbs": 112.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.03},
+    "Milk": {"energy_kcal": 500, "carbs": 112.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.32}, #
+    "Tofu": {"energy_kcal": 500, "carbs": 112.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.08}, #
+    "Toast": {"energy_kcal": 200, "carbs": 37.5, "fats": 2.5, "proteins": 7.5, "co2_per_serving": 0.025},
+    "Oatmeal": {"energy_kcal": 375, "carbs": 67.5, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.047},
+    "Veggie Sandwich": {"energy_kcal": 700, "carbs": 80, "fats": 37.5, "proteins": 50, "co2_per_serving": 0.4},
+    "Salad Mix": {"energy_kcal": 400, "carbs": 20, "fats": 30, "proteins": 20, "co2_per_serving": 0.07},
+    "Soup": {"energy_kcal": 300, "carbs": 50, "fats": 12.5, "proteins": 25, "co2_per_serving": 0.3},
+    "Veg Pasta": {"energy_kcal": 600, "carbs": 100, "fats": 20, "proteins": 37.5, "co2_per_serving": 0.11},
+    "Chicken": {"energy_kcal": 500, "carbs": 0, "fats": 20, "proteins": 75, "co2_per_serving": 1.82},
+    "Fish": {"energy_kcal": 400, "carbs": 0, "fats": 16, "proteins": 62.5, "co2_per_serving": 1.34},
+    "Root Vegetables": {"energy_kcal": 200, "carbs": 50, "fats": 5, "proteins": 12.5, "co2_per_serving": 0.04},
+    "Beef": {"energy_kcal": 700, "carbs": 0, "fats": 45, "proteins": 60, "co2_per_serving": 15.5},
+    "Pork": {"energy_kcal": 600, "carbs": 0, "fats": 30, "proteins": 70, "co2_per_serving": 2.44},
+    "Lamb": {"energy_kcal": 600, "carbs": 0, "fats": 35, "proteins": 65, "co2_per_serving": 5.84},
+    "Prawns": {"energy_kcal": 200, "carbs": 0, "fats": 5, "proteins": 30, "co2_per_serving": 4.07},
+    "Crab": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 1.77}, 
+    "Cheese": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 2.79}, #
+    "Dark Chocolate": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.95}, #
+    "Rice": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.16}, #
+    "Berries": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.22},#
+    "Banana": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.11}, #
+    "Tomato": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.06}, #
+    "Orange/ Apple": {"energy_kcal": 150, "carbs": 0, "fats": 2, "proteins": 20, "co2_per_serving": 0.05}#
+    }
 
         low_impact_food_data = {
-            "Locally sourced Fruits": {"co2_per_serving": 0.2},  # Placeholder value
-            "Locally sourced Vegetables": {"co2_per_serving": 0.15},  # Placeholder value
-            "Legumes": {"co2_per_serving": 0.2},  # Placeholder value
-            "Rice & Grains": {"co2_per_serving": 0.9},  # Placeholder value
-            "Tofu": {"co2_per_serving": 0.32},  # Placeholder value
+            "Locally sourced Fruits": {"co2_per_serving": 0.05},  # Placeholder value
+            "Locally sourced Vegetables": {"co2_per_serving": 0.08},  # Placeholder value
+            "Legumes": {"co2_per_serving": 0.067},  # Placeholder value
+            "Rice": {"co2_per_serving": 0.16},  # Placeholder value
+            "Tofu": {"co2_per_serving": 0.08},  # Placeholder value
             "Milk": {"co2_per_serving": 0.32},  # Placeholder value
             "Eggs": {"co2_per_serving": 0.2},  # Placeholder value
-            "Breads & Pastas": {"co2_per_serving": 0.4}, # Placeholder value
-            "Nuts": {"co2_per_serving": 0.04},
+            "Bread": {"co2_per_serving": 0.025},
+            "Soup": {"co2_per_serving": 0.3},
+            "Veg Pasta": {"co2_per_serving": 0.11}, # Placeholder value
+            "Nuts": {"co2_per_serving": 0.014},
+            "Salad Mix": {"co2_per_serving": 0.07},
+            "Dark Chocolate": {"co2_per_serving": 0.95}
             }
+        
         def calculate_total_co2_emission(selected_meals):
             total_emission = 0
             for meal in selected_meals:
@@ -409,9 +429,9 @@ with tab2:
         # Loop over the meals and assign sliders to left and right columns based on index
         for i, meal in enumerate(meals):
             if i % 2 == 0:  # Display in the left column for even indices
-                grasp_meals_left[meal] = col2.slider(f"How much {meal}? (grams)", min_value=0, max_value=250, value=125, step=25, key=f"{meal}_slider_left")
+                grasp_meals_left[meal] = col2.slider(f"{meal} (servings)", min_value=0.0, max_value=4.0, value=0.5, step=0.5, key=f"{meal}_slider_left")
             else:  # Display in the right column for odd indices
-                grasp_meals_right[meal] = col3.slider(f"How much {meal}? (grams)", min_value=0, max_value=250, value=125, step=25, key=f"{meal}_slider_right")
+                grasp_meals_right[meal] = col3.slider(f"{meal} (servings)", min_value=0.0, max_value=4.0, value=0.5, step=0.5, key=f"{meal}_slider_right")
 
     
         # Calculate total CO2 emission
@@ -427,17 +447,55 @@ with tab2:
                     display_co2_text(meal, choice, grasp_meals_left, grasp_meals_right, data)
                     
             # Metrics columns
-            metrics_col1, metrics_col2 = st.columns(2)
-            for i, (meal, choice) in enumerate(zip(meals, meals)):
-                if choice != "Select your dish":
-                    grasp_meals = grasp_meals_left if i % 2 == 0 else grasp_meals_right
-                    co2_emission = data[choice]["co2_per_serving"] * grasp_meals[meal] / 250
-                    if i % 2 == 0:
-                        with metrics_col1:
-                            st.metric(label=meal, value=round(co2_emission, 2))
-                    else:
-                        with metrics_col2:
-                            st.metric(label=meal, value=round(co2_emission, 2))
+                with st.expander("Individual Meals Co2 Emissions"):
+                    metrics_col1, metrics_col2 = st.columns(2)
+                    for i, (meal, choice) in enumerate(zip(meals, meals)):
+                        if choice != "Select your dish":
+                            grasp_meals = grasp_meals_left if i % 2 == 0 else grasp_meals_right
+                            co2_emission = data[choice]["co2_per_serving"] * grasp_meals[meal] / 0.5
+                            if i % 2 == 0:
+                                with metrics_col1:
+                                    st.metric(label=meal, value=round(co2_emission, 2))
+                            else:
+                                with metrics_col2:
+                                    st.metric(label=meal, value=round(co2_emission, 2))
+        
+        def generate_footprint_bars(total_emission, total_emission_selected_meals):
+            # Calculate the height of the bars based on emissions
+            actual_height = total_emission  # scaling for visualization
+            new_height = total_emission_selected_meals 
+
+            # Load footprint image
+            footprint_image = Image.open("footprint.png")
+
+            # Plot footprint bars using the footprint image
+            fig, ax = plt.subplots()
+
+            # Plot actual emissions bar
+            ax.imshow(footprint_image, aspect='auto', extent=(0, 1, 0, actual_height), alpha=0.7, cmap='viridis')
+            ax.text(0.5, actual_height / 2, f"{total_emission:.2f}", ha='center', va='center', color='white')
+
+            # Plot new emissions bar
+            ax.imshow(footprint_image, aspect='auto', extent=(1.2, 2.2, 0, new_height), alpha=0.7, cmap='viridis')
+            ax.text(1.7, new_height / 2, f"{total_emission_selected_meals:.2f}", ha='center', va='center', color='white')
+
+            # Customize plot
+            ax.set_ylabel('CO2 Footprint')
+            ax.set_title('CO2 Footprint Comparison')
+            ax.set_xticks([0.5, 1.7])
+            ax.set_xticklabels(["Actual", "New"])
+            ax.set_xlim(0, 2.5)
+            ax.set_ylim(0, max(actual_height, new_height) * 1.1)  # Set ylim to ensure all footprints are visible
+            ax.grid(False)
+
+            # Remove x-axis ticks
+            ax.xaxis.set_ticks_position('none')
+
+            # Remove y-axis ticks
+            ax.yaxis.set_ticks_position('none')
+
+            # Show plot
+            st.pyplot(fig)
 
         # Display total CO2 emission gauge
         with  col1:
@@ -447,15 +505,19 @@ with tab2:
 
         if meals:
             with st.expander("Reduce Food Carbon Footprint"):
-                selected_low_impact_meals = st.multiselect("Select Low-Impact Foods",
-        list(low_impact_food_data.keys()), default=[],
-        help="Select low-impact foods for your meals to reduce CO2 emissions.")
+                col1, col2 = st.columns([2,1])
+                with col1:
+                    selected_low_impact_meals = st.multiselect("Select Low-Impact Foods",
+            list(low_impact_food_data.keys()), default=[],
+            help="Select low-impact foods for your meals to reduce CO2 emissions.")
                 if st.button("Calculate co2 savings on food"):
                     total_emission_selected_meals = calculate_total_co2_emission(selected_low_impact_meals)
                     co2_emissions_saved = total_emissions_all_tabs - total_emission_selected_meals
                     co2_emissions_saved_all_tabs  += co2_emissions_saved
                     if selected_low_impact_meals or st.session_state.user_input_started:
                             display_co2_saved_metric(co2_emissions_saved_all_tabs)
+                    generate_footprint_bars(total_emission, total_emission_selected_meals)
+                with col2:
                     st.metric(label="Total CO2 Emission saved", value=round(co2_emissions_saved_all_tabs,2))
                     
                 
