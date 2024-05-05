@@ -5,6 +5,7 @@ st.set_page_config(
     page_title="Carbon Footprint Reduction App",
     page_icon="♻🌏",
 )
+
 st.markdown(
     """# 👣 **Carbon Footprint Reduction App**
 ##### **Find how much you are contributing to heating the globe and how you can cool it?**
