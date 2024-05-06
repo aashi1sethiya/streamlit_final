@@ -10,10 +10,72 @@ import plotly.graph_objs as go
 
 
 st.set_page_config(layout="wide")
+# Define CSS styles
+css = """
+    <style>
+        .title {
+            color: black;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .subheader {
+            color: #444;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 0px;
+            margin-bottom: 5px;
+        }
+            .normal-text {
+            color: black; /* Set color to black */
+            font-size: 30px; /* Adjust font size */
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .container {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .multiselect-container {
+            max-width: 400px;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+        
+        }
+    </style>
+"""
+
+# Render CSS
+st.markdown(css, unsafe_allow_html=True)
 selected_low_impact_meals = []
 
+
 # Main page
-st.title("Daily Carbon Footprint Calculator")
+st.markdown("<p class='normal-text'>Daily Carbon Footprint Calculator</p>", unsafe_allow_html=True)
+
 
 col1, col2 = st.columns([1,1])
 
@@ -126,15 +188,13 @@ with tab1:
         svg_code = f'<svg width="{svg_width}" height="{svg_height + bar_bottom_margin + bar_top_margin}">' + ''.join(svg_elements) + '</svg>'
 
         # Display SVG in Streamlit
-        st.write(svg_code, unsafe_allow_html=True)
+        st.markdown(svg_code, unsafe_allow_html=True)
 
 
-    st.write("## Co2 Emissions for Commute")
-
+    st.markdown("<p class='title'>Co2 Emissions for Commute</p>", unsafe_allow_html=True)
     # Streamlit UI
-
     # Write "Add your daily commute" above the multi-select input
-    st.subheader("Add your daily commute")
+    st.markdown("<p class='subheader'>Add your daily commute</p>", unsafe_allow_html=True)
 
     # User Inputs
     commute_options = [
@@ -190,7 +250,7 @@ with tab1:
         if co2_emissions_selected:
             col1, col2 = st.columns([3, 2])
             with col1:
-                st.subheader("Co2 Emissions Graph")
+                st.markdown("<p class='subheader'>Co2 Emissions Graph</p>", unsafe_allow_html=True)
                 generate_graph(co2_emissions_selected, bar_overlap, opacity)
             
             with col2:
@@ -248,7 +308,7 @@ with tab1:
     
     st.subheader('')
     if selected_commutes:
-        st.subheader('Add Commute for CO2 Savings Prediction')
+        st.markdown("<p class='subheader'>Add Commute for CO2 Savings Prediction</p>", unsafe_allow_html=True)
         # Expander for user input for the new commute and CO2 emissions comparison
     if selected_commutes or st.session_state.user_input_started:
                     #  # Splitting the layout into columns
@@ -291,7 +351,7 @@ with tab1:
                         co2_emissions_saved_all_tabs  += co2_emissions_saved
                         
                         if new_commutes:
-                            st.subheader("Co2 Footprint Comparison")
+                            st.markdown("<p class='subheader'>Co2 Footprint Comparison</p>", unsafe_allow_html=True)
 
                         col1, col2 = st.columns([3,1])
                         with col1:
@@ -446,12 +506,12 @@ with tab2:
             return total_emission
 
         # Main page
-        st.write("## Co2 Emissions for Food")
+        st.markdown("<p class='title'>Co2 Emissions for Food</p>", unsafe_allow_html=True)
 
         # Sidebar
         col1, col2, col3 = st.columns([3, 1, 1])  # Divide the space into three columns
         with col1:
-            st.subheader("Add your Daily Meal")
+            st.markdown("<p class='subheader'>Add your Daily Meal</p>", unsafe_allow_html=True)
             meals = st.multiselect("Select Meals", list(data.keys()), default=None)
 
         # Create two separate dictionaries to hold the slider values for each column
@@ -474,7 +534,7 @@ with tab2:
         col1, col2 = st.columns([2, 1])
         with col2:
             if meals:
-                st.subheader("Co2 Emissions (kg)")
+                st.markdown("<p class='subheader'>Co2 Emissions (kg)</p>", unsafe_allow_html=True)
                 for meal, choice in zip(meals, meals):
                     display_co2_text(meal, choice, grasp_meals_left, grasp_meals_right, data)
                     
@@ -532,7 +592,7 @@ with tab2:
         # Display total CO2 emission gauge
         with  col1:
             if meals:
-                st.write("### Total CO2 Emission Gauge")
+                st.markdown("<p class='subheader'>Total CO2 Emission Gauge</p>", unsafe_allow_html=True)
                 st_echarts(options=draw_gauge_chart(total_emission), height="300px")
 
         if meals:
@@ -545,7 +605,7 @@ with tab2:
                         co2_emissions_food_saved = total_emission - total_emission_selected_meals
                         co2_emissions_saved_all_tabs  += co2_emissions_food_saved
                         display_co2_saved_metric(co2_emissions_saved_all_tabs)
-                        st.subheader('Co2 Footprint Comparison')
+                        st.markdown("<p class='subheader'>Co2 Footprint Comparison</p>", unsafe_allow_html=True)
                 col1, col2 = st.columns([2,1])
                 with col1:
                     if selected_low_impact_meals:
@@ -575,10 +635,10 @@ with tab2:
                         total_proteins = (data[choice]["proteins"] * grasp_meals[meal]) / 250
                         with columns[i % num_columns]:
                             st.subheader(f"{choice}")
-                            st.write(f"**Total Energy (kcal):** {total_energy:.2f}")
+                            st.markdown(f"**Total Energy (kcal):** {total_energy:.2f}")
                             st.bar_chart({"Carbs": total_carbs, "Fats": total_fats, "Proteins": total_proteins})
                     else:
-                        st.write(f"No data available for {meal}")
+                        st.markdown(f"No data available for {meal}")
 
         if meals:
             display_co2_metric(total_emissions_all_tabs)
@@ -611,7 +671,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             elif appliance == "Air Conditioner":
                 st.subheader(appliance)
                 switched_off_ac = st.checkbox("Switched off AC", key=f"{appliance}_checkbox4")
@@ -623,7 +683,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             # Add other appliances and their conditions here
             elif appliance == "Heater":
                 st.subheader(appliance)
@@ -637,7 +697,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             # Repeat this pattern for each appliance
             elif appliance == "Television":
@@ -649,7 +709,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             # Repeat this pattern for each appliance
             elif appliance == "Fan":
                 st.subheader(appliance)
@@ -660,7 +720,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
     
             elif appliance == "Dryer":
                 st.subheader(appliance)
@@ -671,7 +731,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             # Add more appliances here
             # For example:
@@ -684,7 +744,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             elif appliance == "Blender":
                 st.subheader(appliance)
@@ -695,7 +755,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             elif appliance == "Vacuum Cleaner":
                 st.subheader(appliance)
                 did_not_use_vacuum_cleaner = st.checkbox("Did not use Vacuum Cleaner", key=f"{appliance}_checkbox13")
@@ -705,7 +765,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             elif appliance == "Iron":
                 st.subheader(appliance)
@@ -717,7 +777,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             elif appliance == "Hairdryer":
                 st.subheader(appliance)
@@ -728,7 +788,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             elif appliance == "Toaster":
                 st.subheader(appliance)
                 did_not_use_toaster = st.checkbox("Did not use Toaster", key=f"{appliance}_checkbox16")
@@ -738,7 +798,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             elif appliance == "Electric Kettle":
                 st.subheader(appliance)
@@ -749,7 +809,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
                 
             elif appliance == "Microwave":
                 st.subheader(appliance)
@@ -760,7 +820,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
                 
 
             elif appliance == "Water Heater":
@@ -772,7 +832,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
 
             elif appliance == "Incandescent Light":
@@ -784,7 +844,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             
             elif appliance == "Dishwasher":
                 st.subheader(appliance)
@@ -796,7 +856,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
                     
             elif appliance == "Oven/Stove":
                 st.subheader(appliance)
@@ -807,7 +867,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
                 
             elif appliance == "Refrigerator":
                 st.subheader(appliance)
@@ -818,7 +878,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
                 
             elif appliance == "Washing Machine":
                 st.subheader(appliance)
@@ -829,7 +889,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
             
             elif appliance == "Computer/Laptop":
                 st.subheader(appliance)
@@ -840,7 +900,7 @@ with tab3:
                     if duration:
                         co2_emission_saved =  total_emissions[appliance]   - new_co2_emission
                         rounded_co2_emission_saved = round(co2_emission_saved, 2)
-                        st.write(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
+                        st.markdown(f"CO2 emission savings for {appliance}: {rounded_co2_emission_saved} kg")
 
             return (co2_emission_saved, duration)
     # Load the dataset
@@ -854,11 +914,12 @@ with tab3:
     }
     appliances_df = pd.DataFrame(appliances_data)
 
-    st.write("## CO2 Emissions for Household Appliance")
+    st.markdown("<p class='title'>CO2 Emissions for Household Appliance</p>", unsafe_allow_html=True)
+
     col1, col2 = st.columns([2,1])
 
     with col1:
-        st.subheader('Add your Daily Appliance Usage')
+        st.markdown("<p class='subheader'>Add your Daily Appliance Usage</p>", unsafe_allow_html=True)
         # Multi-select for selecting appliances
         selected_appliances = col1.multiselect("Select Appliances", appliances_df["Appliance"])
         
@@ -867,7 +928,7 @@ with tab3:
 
         if selected_appliances:
             # Expander for taking user input for hours
-            st.subheader('Individual Appliance Input')
+            st.markdown("<p class='subheader'>Individual Appliance Input</p>", unsafe_allow_html=True)
             for appliance in selected_appliances:
                 usage_hours[appliance] = st.slider(f"{appliance} hours used", min_value=0.0, max_value=24.0, value=0.0, 
                                                         step=0.25)
@@ -912,7 +973,7 @@ with tab3:
 
     if selected_appliances:
             st.subheader('')
-            st.subheader('Add Appliance for CO2 Savings Prediction')
+            st.markdown("<p class='subheader'>Add Appliance for CO2 Savings Prediction</p>", unsafe_allow_html=True)
             with st.expander('Reduce Appliance Carbon Footprint'):
                 co2_emissions_saved_current_placeholder = st.empty()
                 total_new_co2_emission_saved=0
