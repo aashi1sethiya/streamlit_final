@@ -4,7 +4,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from pyecharts import options as opts
 from pyecharts.charts import PictorialBar
-import numpy as np
 from PIL import Image
 import plotly.graph_objs as go
 
@@ -995,9 +994,7 @@ with tab3:
                             total_new_co2_emission_saved += saved
                 co2_emissions_saved_current_placeholder.metric(label="Total CO2 emission savings", value=round(total_new_co2_emission_saved, 2))
                 co2_emissions_saved_all_tabs += total_new_co2_emission_saved
-                if duration > 0:
-                    display_co2_saved_metric(co2_emissions_saved_all_tabs)
-                    duration=0
+                display_co2_saved_metric(co2_emissions_saved_all_tabs)
                 
             
                             
