@@ -3,6 +3,6 @@ streamlit_echarts==0.4.0
 pandas==2.2.2
 matplotlib==3.8.4
 pyecharts==2.0.5
-numpy==1.26.4
+numpy
 plotly==5.21.0
 Pillow==10.3.0
