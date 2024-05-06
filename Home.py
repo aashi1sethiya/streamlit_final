@@ -5,11 +5,6 @@ st.set_page_config(
     page_icon="🌏",
 )
 
-st.set_page_config(
-    page_title="Stock Prediction Analysis",
-    page_icon="📈",
-)
-
 st.markdown(
     """# 👣 **Carbon Footprint Reduction App**
 ##### **Find how much you are contributing to heating the globe and how you can cool it?**
