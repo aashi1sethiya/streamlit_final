@@ -1,4 +1,3 @@
-
 st.markdown(
     """# 👣 **Carbon Footprint Reduction App**
 ##### **Find how much you are contributing to heating the globe and how you can cool it?**
@@ -44,6 +43,6 @@ Is is built with these core frameworks and modules:
 ##  **Future Work**
 
 - **Add more features** - Add Re-cycle tab, display reduced carbon footprint, give user option to calculate yearly carbon footprint
-- **Add Dynamic charts** - Add charts that compare the Co2 emission of the user with their average counterpart  
+- **Add Dynamic charts** - Add charts that compare the Co2 emission of the user with their average counterpart
 """
 )
