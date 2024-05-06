@@ -12,8 +12,8 @@
 - Our Co2 Emissions Calculator is designed to shed light on your **carbon footprint** across three major domains: **Commute**, **Food**, and **Appliances**
 - With intuitive interfaces and powerful calculations, we aim to inspire informed decisions and meaningful actions towards a greener future
 
-##  **Data**
-- Data has been sourced from:
+## 📊 **Data**
+- **Data has been sourced from:**
   1. https://css.umich.edu/publications/factsheets/sustainability-indicators/carbon-footprint-factsheet
   2. Cool the Globe App -https://www.cooltheglobe.org/
 - All Co2 emissions were stored for a single unit
@@ -40,7 +40,7 @@ Is is built with these core frameworks and modules:
 - **User-input data** - User's data for multiple daily activities
 - **Dynamic charts** - Interactive charts to understand impact of your predicted activities
 
-##  **Future Work**
+##  🔜 **Future Work**
 
 - **Add more features** - Add Re-cycle tab, display reduced carbon footprint, give user option to calculate yearly carbon footprint
 - **Add Dynamic charts** - Add charts that compare the Co2 emission of the user with their average counterpart
