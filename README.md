@@ -1,5 +1,6 @@
 st.markdown(
-    """# 👣 **Carbon Footprint Reduction App**
+    """
+    # 👣 **Carbon Footprint Reduction App**
 ##### **Find how much you are contributing to heating the globe and how you can cool it?**
 
 ## 🏗️ **Streamlit App** - https://daily-carbon-footprint-reduction-app.streamlit.app/
