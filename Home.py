@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Carbon Footprint Reduction App",
-    page_icon="🌏",
+    page_icon="👣",
 )
 
 st.markdown(
