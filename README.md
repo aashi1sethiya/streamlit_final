@@ -2,7 +2,6 @@
 # 👣 **Carbon Footprint Reduction App**
 ##### **Find how much you are contributing to heating the globe and how you can cool it?**
 
-## 🏗️ **Streamlit App** 
 [![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://carbon-footprint-reduction.streamlit.app/)
 
 ## ♻ **Why CO2 Emissions Matter** 
