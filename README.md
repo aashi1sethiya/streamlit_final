@@ -2,7 +2,7 @@
 # 👣 **Carbon Footprint Reduction App**
 ##### **Find how much you are contributing to heating the globe and how you can cool it?**
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://carbon-footprint-reduction.streamlit.app/)
+[<img src="https://static.streamlit.io/badges/streamlit_badge_black_white.svg" alt="Open in Streamlit" width="200" height="50">](https://carbon-footprint-reduction.streamlit.app/)
 
 ## ♻ **Why CO2 Emissions Matter** 
 - CO2 emissions matter because they fuel **climate change**, **triggering extreme weather events** and **habitat loss**
