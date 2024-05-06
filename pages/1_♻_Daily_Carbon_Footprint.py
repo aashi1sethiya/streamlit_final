@@ -7,6 +7,10 @@ from pyecharts.charts import PictorialBar
 from PIL import Image
 import plotly.graph_objs as go
 
+st.set_page_config(
+    page_title="Daily Carbon Footprint",
+    page_icon="♻",
+)
 
 st.set_page_config(layout="wide")
 # Define CSS styles
