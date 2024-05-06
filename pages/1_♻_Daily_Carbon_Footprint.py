@@ -10,9 +10,8 @@ import plotly.graph_objs as go
 st.set_page_config(
     page_title="Daily Carbon Footprint",
     page_icon="♻",
+    layout="wide"
 )
-
-st.set_page_config(layout="wide")
 # Define CSS styles
 css = """
     <style>
